@@ -2,10 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using PGVaxBook.ApplicationService.Agendamento;
 using PGVaxBook.ApplicationService.ConsultaAgendamento;
+using PGVaxBook.ApplicationService.Validations;
 using PGVaxBook.Infra.Files;
 using PGVaxBook.Messages.Requests;
-using PGVaxBook.Services.Agendamento;
-using PGVaxBook.Services.ConsultaAgendamento;
 
 namespace PGVaxBook.Presentation.Console.Configuration;
 
@@ -13,7 +12,15 @@ public static class Bootstrap
 {
     public static async Task RunAsync(string[] args)
     {
-        var isSingleArgument = IsSingleArgument(args);
+        var host = DependencyInvertionConfiguration.BuildHost();
+        var serviceProvider = DependencyInvertionConfiguration.BuildServicesProvider();
+
+        var consultaAgendamentoApplicationService = GetConsultaAgendamentoApplicationServiceInstance(serviceProvider);
+        var agendamentoApplicationService = GetAgendamentoApplicationServiceInstance(serviceProvider);
+        var recordsConfiguration = GetRecordsConfigurationInstance(serviceProvider);
+        var argsValidationService = GetValidationServiceInstance(serviceProvider);
+
+        var isSingleArgument = argsValidationService.IsSingleArgument(args);
 
         if (!isSingleArgument)
         {
@@ -21,58 +28,75 @@ public static class Bootstrap
             Environment.Exit(0);
         }
 
-        var path = await IsFilePathExists(args);
+        var path = argsValidationService.IsFilePathExists(args);
 
         if (path)
         {
-            var recordsConfiguration = new RecordsConfiguration();
-            recordsConfiguration.Lines = await ReadFile(args);
-
-            using IHost host = Host.CreateDefaultBuilder(args)
-                .ConfigureServices((_, services) =>
-                    services.AddScoped<IAgendamentoApplicationService, AgendamentoApplicationService>()
-                        .AddScoped<IConsultaAgendamentoApplicationService, ConsultaAgendamentoApplicationService>()
-                        .AddScoped<IAgendamentoService, AgendamentoService>()
-                        .AddScoped<IConsultaAgendamentoService, ConsultaAgendamentoService>()
-                        .AddSingleton<RecordsConfiguration>(recordsConfiguration))
-                .Build();
+            recordsConfiguration.Lines = ReadFileConfiguration.ReadFile(args);
 
             var agendamentosRequest = GetAgendamentoApplicationRequests(recordsConfiguration.Lines);
 
             var cpfs = GetCpfsFromAgendamentoApplicationRequests(agendamentosRequest);
 
-            var consultasRequest = GetConsultaAgendamentoApplicationRequests(cpfs);
-            
-            // TODO: Uncomment to execute the methods
-            //await Agendamento(host.Services, agendamentosRequest);
-            //await ConsultaAgendamento(host.Services, consultasRequest);
+            var consultasAgendamentoRequest = GetConsultaAgendamentoApplicationRequests(cpfs);
 
-            await host.RunAsync();
+
+            Menu.ListOptions();
+
+            var option = Menu.ReadOption();
+
+            var menuOptionEnum = Menu.Option(option);
+
+            switch (menuOptionEnum)
+            {
+                case MenuOptionsEnum.Consulta:
+                    System.Console.WriteLine("\nExecuting Consulta");
+                    var result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultasAgendamentoRequest, 7000);
+                    System.Console.WriteLine($"{result.FirstOrDefault()}");
+                    break;
+                case MenuOptionsEnum.Agendamento:
+                    System.Console.WriteLine("\nExecuting Agendamento");
+                    await agendamentoApplicationService.MakeAgendamento(agendamentosRequest, 7000);
+                    break;
+                default:
+                    break;
+            }
+
+            //host.Run();
         }
         else
         {
-            System.Console.Error.WriteLine("Needs to pass the file path");
+            System.Console.Error.WriteLine("Needs to pass the file path.");
             Environment.Exit(0);
         }
     }
 
-    private static async Task<bool> IsFilePathExists(string[] args)
+    private static IArgsValidationService GetValidationServiceInstance(ServiceProvider serviceProvider)
     {
-        return args.Any() &&
-            !string.IsNullOrEmpty(args[0]) &&
-            File.Exists(args[0]);
+        using var scope = serviceProvider.CreateScope();
+        var argsValidationService = scope.ServiceProvider.GetService<IArgsValidationService>();
+        return argsValidationService;
     }
 
-    private static bool IsSingleArgument(string[] args)
+    private static IAgendamentoApplicationService GetAgendamentoApplicationServiceInstance(ServiceProvider serviceProvider)
     {
-        return args.Any() &&
-            args.Length == 1;
+        using var scope = serviceProvider.CreateScope();
+        var agendamentoApplicationService = scope.ServiceProvider.GetService<IAgendamentoApplicationService>();
+        return agendamentoApplicationService;
     }
 
-    private static async Task<List<string>> ReadFile(string[] args)
+    private static IConsultaAgendamentoApplicationService GetConsultaAgendamentoApplicationServiceInstance(ServiceProvider serviceProvider)
     {
-        var lines = await File.ReadAllLinesAsync(args[0]);
-        return lines.ToList();
+        using var scope = serviceProvider.CreateScope();
+        var consultaAgendamentoApplicationService = scope.ServiceProvider.GetService<IConsultaAgendamentoApplicationService>();
+        return consultaAgendamentoApplicationService;
+    }
+
+    private static RecordsConfiguration GetRecordsConfigurationInstance(ServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var recordsConfiguration = scope.ServiceProvider.GetService<RecordsConfiguration>();
+        return recordsConfiguration;
     }
 
     private static List<string> GetCpfsFromAgendamentoApplicationRequests(List<AgendamentoApplicationRequest> agendamentoApplicationRequests)
@@ -121,46 +145,5 @@ public static class Bootstrap
         }
 
         return consultaAgendamentoRequests;
-    }
-
-    private static async Task Agendamento(IServiceProvider services, List<AgendamentoApplicationRequest> agendamentoApplicationRequests)
-    {
-        using IServiceScope serviceScope = services.CreateScope();
-        IServiceProvider provider = serviceScope.ServiceProvider;
-
-        var agendamentoApplicationService = provider.GetRequiredService<IAgendamentoApplicationService>();
-
-        foreach (var agendamentoApplicationRequest in agendamentoApplicationRequests)
-        {
-            var response = await agendamentoApplicationService.MakeAgendamento(agendamentoApplicationRequest);
-
-            System.Console.WriteLine($"Result: {response}");
-
-            await Task.Delay(7000);
-        }
-    }
-
-    private static async Task ConsultaAgendamento(IServiceProvider services, List<ConsultaAgendamentoApplicationRequest> consultaAgendamentoApplicationRequests)
-    {
-        using IServiceScope serviceScope = services.CreateScope();
-        IServiceProvider provider = serviceScope.ServiceProvider;
-
-        var consultaAgendamentoApplicationService = provider.GetRequiredService<IConsultaAgendamentoApplicationService>();
-
-        foreach (var consultaAgendamentoApplicationRequest in consultaAgendamentoApplicationRequests)
-        {
-            var isAgendado = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaAgendamentoApplicationRequest);
-
-            if (isAgendado)
-            {
-                System.Console.WriteLine($"O CPF {consultaAgendamentoApplicationRequest.Cpf} esta agendado");
-            }
-            else
-            {
-                System.Console.WriteLine($"O CPF {consultaAgendamentoApplicationRequest.Cpf} NAO esta agendado");
-            }
-
-            await Task.Delay(7000);
-        }
     }
 }

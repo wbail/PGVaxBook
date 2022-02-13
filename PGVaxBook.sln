@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGVaxBook.DI", "PGVaxBook.D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2_Files", "2_Files", "{FC3E13DE-009F-4A59-B84A-4E2E9FF4456F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PGVaxBook.Infra.Files", "PGVaxBook.Infra.Files\PGVaxBook.Infra.Files.csproj", "{2950C03C-B63E-46FB-8FAF-F807047FCB1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGVaxBook.Infra.Files", "PGVaxBook.Infra.Files\PGVaxBook.Infra.Files.csproj", "{2950C03C-B63E-46FB-8FAF-F807047FCB1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

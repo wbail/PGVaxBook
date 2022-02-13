@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PGVaxBook.Presentation.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\\\Users\\\\JoeDoe\\\\Desktop\\\\record.txt"
+    }
+  }
+}

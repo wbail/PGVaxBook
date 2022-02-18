@@ -1,4 +1,6 @@
-﻿namespace PGVaxBook.Presentation.Console;
+﻿using PGVaxBook.Presentation.Console.Menus.Enums;
+
+namespace PGVaxBook.Presentation.Console.Menus;
 
 public static class Menu
 {

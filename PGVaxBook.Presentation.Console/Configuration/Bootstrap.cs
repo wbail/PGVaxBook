@@ -4,7 +4,8 @@ using PGVaxBook.ApplicationService.Agendamento;
 using PGVaxBook.ApplicationService.ConsultaAgendamento;
 using PGVaxBook.ApplicationService.Validations;
 using PGVaxBook.Infra.Files;
-using PGVaxBook.Messages.Requests;
+using PGVaxBook.Presentation.Console.Menus;
+using PGVaxBook.Presentation.Console.Menus.Enums;
 
 namespace PGVaxBook.Presentation.Console.Configuration;
 
@@ -34,12 +35,7 @@ public static class Bootstrap
         {
             recordsConfiguration.Lines = ReadFileConfiguration.ReadFile(args);
 
-            var agendamentosRequest = GetAgendamentoApplicationRequests(recordsConfiguration.Lines);
-
-            var cpfs = GetCpfsFromAgendamentoApplicationRequests(agendamentosRequest);
-
-            var consultasAgendamentoRequest = GetConsultaAgendamentoApplicationRequests(cpfs);
-
+            MenuLevel1.Build(recordsConfiguration.Lines);
 
             Menu.ListOptions();
 
@@ -50,13 +46,40 @@ public static class Bootstrap
             switch (menuOptionEnum)
             {
                 case MenuOptionsEnum.Consulta:
+                    MenuLevel1.ListOptions();
+                    option = MenuLevel1.ReadOption();
+                    var consultaRequest = MenuLevel1.OptionConsulta(option);
                     System.Console.WriteLine("\nExecuting Consulta");
-                    var result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultasAgendamentoRequest, 7000);
-                    System.Console.WriteLine($"{result.FirstOrDefault()}");
+
+                    var result = new List<string>();
+
+                    if (consultaRequest.Count > 1)
+                    {
+                        result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest, 7000);
+                        result.ForEach(x => System.Console.WriteLine(x));
+                        break;
+                    }
+
+                    var test = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest.FirstOrDefault());
+                    System.Console.WriteLine($"{test}");
                     break;
                 case MenuOptionsEnum.Agendamento:
+                    MenuLevel1.ListOptions();
+                    option = MenuLevel1.ReadOption();
+                    var agendamentoRequest = MenuLevel1.OptionAgendamento(option);
                     System.Console.WriteLine("\nExecuting Agendamento");
-                    await agendamentoApplicationService.MakeAgendamento(agendamentosRequest, 7000);
+
+                    result = new List<string>();
+
+                    if (agendamentoRequest.Count > 1)
+                    {
+                        result = await agendamentoApplicationService.MakeAgendamento(agendamentoRequest, 7000);
+                        result.ForEach(x => System.Console.WriteLine(x));
+                        break;
+                    }
+
+                    var resultAgendamento = await agendamentoApplicationService.MakeAgendamento(agendamentoRequest.FirstOrDefault());
+                    System.Console.WriteLine($"{resultAgendamento}");
                     break;
                 default:
                     break;
@@ -97,53 +120,5 @@ public static class Bootstrap
         using var scope = serviceProvider.CreateScope();
         var recordsConfiguration = scope.ServiceProvider.GetService<RecordsConfiguration>();
         return recordsConfiguration;
-    }
-
-    private static List<string> GetCpfsFromAgendamentoApplicationRequests(List<AgendamentoApplicationRequest> agendamentoApplicationRequests)
-    {
-        return agendamentoApplicationRequests.Select(request => request.Cpf).ToList();
-    }
-
-    private static List<AgendamentoApplicationRequest> GetAgendamentoApplicationRequests(List<string> records)
-    {
-        var agendamentoRequests = new List<AgendamentoApplicationRequest>();
-
-        foreach (string line in records.Skip(1))
-        {
-            var field = line.Split(',');
-
-            var agendamentoRequest = new AgendamentoApplicationRequest();
-            agendamentoRequest.Cartao_Sus = field[0];
-            agendamentoRequest.Celular = field[1];
-            agendamentoRequest.Cep = field[2];
-            agendamentoRequest.Complemento = field[3];
-            agendamentoRequest.DataNascimento = field[4];
-            agendamentoRequest.IdPrograma = field[5];
-            agendamentoRequest.Logradouro = field[6];
-            agendamentoRequest.Nome = field[7];
-            agendamentoRequest.Nome_Mae = field[8];
-            agendamentoRequest.Numero = field[9];
-            agendamentoRequest.Regiao = field[10];
-            agendamentoRequest.Sexo = field[11];
-            agendamentoRequest.Cpf = field[12];
-
-            agendamentoRequests.Add(agendamentoRequest);
-        }
-
-        return agendamentoRequests;
-    }
-
-    private static List<ConsultaAgendamentoApplicationRequest> GetConsultaAgendamentoApplicationRequests(List<string> cpfs)
-    {
-        var consultaAgendamentoRequests = new List<ConsultaAgendamentoApplicationRequest>();
-
-        foreach (var cpf in cpfs)
-        {
-            var consultaAgendamento = new ConsultaAgendamentoApplicationRequest(cpf);
-
-            consultaAgendamentoRequests.Add(consultaAgendamento);
-        }
-
-        return consultaAgendamentoRequests;
     }
 }

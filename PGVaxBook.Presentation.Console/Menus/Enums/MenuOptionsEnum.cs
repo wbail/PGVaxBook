@@ -1,4 +1,4 @@
-﻿namespace PGVaxBook.Presentation.Console;
+﻿namespace PGVaxBook.Presentation.Console.Menus.Enums;
 
 public enum MenuOptionsEnum
 {

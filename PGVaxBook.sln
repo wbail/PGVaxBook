@@ -56,11 +56,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0CEB667B-6779-4F99-B7B8-304ED6E7FC40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A5C34724-C63D-4992-BAC6-A7EBCEFD8554}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Architecture", "Architecture", "{4DD1886D-E91D-4E45-8EB8-C7A1CBD73537}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\Downloads\PGVaxBook.drawio.png = ..\..\..\Downloads\PGVaxBook.drawio.png
-		..\..\..\Downloads\PGVaxBook.drawio.xml = ..\..\..\Downloads\PGVaxBook.drawio.xml
+		Architecture\PGVaxBook.drawio.png = Architecture\PGVaxBook.drawio.png
+		Architecture\PGVaxBook.drawio.xml = Architecture\PGVaxBook.drawio.xml
 	EndProjectSection
 EndProject
 Global
@@ -139,7 +137,6 @@ Global
 		{472F453D-6068-4920-9C24-234EC6881C56} = {A1F17755-3DB3-4440-9A83-3B02703698C7}
 		{FC3E13DE-009F-4A59-B84A-4E2E9FF4456F} = {384C2530-6160-4E82-864C-42899F10A6E7}
 		{2950C03C-B63E-46FB-8FAF-F807047FCB1C} = {FC3E13DE-009F-4A59-B84A-4E2E9FF4456F}
-		{4DD1886D-E91D-4E45-8EB8-C7A1CBD73537} = {A5C34724-C63D-4992-BAC6-A7EBCEFD8554}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {34E3D8EF-A054-4CC1-9138-03B413506D86}

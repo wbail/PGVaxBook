@@ -52,16 +52,9 @@ public static class Bootstrap
                     System.Console.WriteLine("\nExecuting Consulta");
 
                     var result = new List<string>();
+                    result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest, 7000);
+                    result.ForEach(x => System.Console.WriteLine(x));
 
-                    if (consultaRequest.Count > 1)
-                    {
-                        result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest, 7000);
-                        result.ForEach(x => System.Console.WriteLine(x));
-                        break;
-                    }
-
-                    var test = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest.FirstOrDefault());
-                    System.Console.WriteLine($"{test}");
                     break;
                 case MenuOptionsEnum.Agendamento:
                     MenuLevel1.ListOptions();
@@ -70,16 +63,9 @@ public static class Bootstrap
                     System.Console.WriteLine("\nExecuting Agendamento");
 
                     result = new List<string>();
+                    result = await agendamentoApplicationService.MakeAgendamento(agendamentoRequest, 7000);
+                    result.ForEach(x => System.Console.WriteLine(x));
 
-                    if (agendamentoRequest.Count > 1)
-                    {
-                        result = await agendamentoApplicationService.MakeAgendamento(agendamentoRequest, 7000);
-                        result.ForEach(x => System.Console.WriteLine(x));
-                        break;
-                    }
-
-                    var resultAgendamento = await agendamentoApplicationService.MakeAgendamento(agendamentoRequest.FirstOrDefault());
-                    System.Console.WriteLine($"{resultAgendamento}");
                     break;
                 default:
                     break;

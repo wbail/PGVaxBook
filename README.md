@@ -1,6 +1,6 @@
-# Ponta Grossa Vaccination Apointments :syringe:
+# Ponta Grossa Vaccination Appointments :syringe:
 
-Application responsible to create an apointment or check the status of an apointment at Ponta Grossa Vaccination [website](https://fms.pontagrossa.pr.gov.br/vacinacao/).
+Application responsible to create an appointment or check the status of an apointment at Ponta Grossa Vaccination [website](https://fms.pontagrossa.pr.gov.br/vacinacao/).
 
 ## Table of Contents
  
@@ -22,11 +22,11 @@ Application responsible to create an apointment or check the status of an apoint
 
 ## Features :rocket:
  
--  __Make an apointment:__
+- __Make an apointment:__
   - __A specific person__
   - __A a group of people__
  
--  __Check an apointment:__
+- __Check an apointment:__
   - __A specific person__
   - __A a group of people__
 

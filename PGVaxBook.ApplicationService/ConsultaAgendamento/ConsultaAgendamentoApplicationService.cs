@@ -12,13 +12,6 @@ public class ConsultaAgendamentoApplicationService : IConsultaAgendamentoApplica
         _consultaAgendamentoService = consultaAgendamentoService;
     }
 
-    public async Task<bool> ConsultaAgendamento(ConsultaAgendamentoApplicationRequest consultaAgendamentoRequest)
-    {
-        var response = await _consultaAgendamentoService.ConsultaAgendamento(consultaAgendamentoRequest);
-
-        return IsConsultaAgendamentoExists(response.Html);
-    }
-
     public async Task<List<string>> ConsultaAgendamento(List<ConsultaAgendamentoApplicationRequest> consultaAgendamentoRequests, int delayInMilliseconds)
     {
         var consultaAgendamentoResponseList = new List<string>();

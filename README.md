@@ -43,11 +43,20 @@ Application responsible to create an appointment or check the status of an apoin
 Open the cmd and execute: ```git clone https://github.com/wbail/PGVaxBook```
  
 ## Usage :building_construction:
-  
-1. Open the Visual Studio 2022
-2. Open the solution
-3. At `PGVaxBook\PGVaxBook.Presentation.Console\Properties\launchSettings.json` change the path to your file.
-4. Execute the application
+
+- Development  
+  1. Open the Visual Studio 2022
+  2. Open the solution
+  3. At `PGVaxBook\PGVaxBook.Presentation.Console\Properties\launchSettings.json` change the path to your file.
+  4. Execute the application
+
+- Production
+  1. Download the the latest `.exe` file available in this repo: https://github.com/wbail/PGVaxBook/releases
+  2. Download the text file: `records.txt`
+  3. Replace the values with your information and save it
+  4. Open a `cmd`
+  5. Navigate where is located the `PGVaxBook.exe` file
+  6. Execute: `PGVaxBook.exe C:\Path\To\records.txt`
 
 ## Architecture :triangular_ruler:
  

@@ -60,7 +60,7 @@ Open the cmd and execute: ```git clone https://github.com/wbail/PGVaxBook```
 
 ## Architecture :triangular_ruler:
  
-- Soon
+![Architecture](Architecture/PGVaxBook.drawio.png)
  
 ## Support :construction_worker:
  

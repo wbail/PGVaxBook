@@ -13,20 +13,6 @@ public class AgendamentoApplicationService : IAgendamentoApplicationService
         _agendamentoService = agendamentoService;
     }
 
-    public async Task<string> MakeAgendamento(AgendamentoApplicationRequest agendamentoRequest)
-    {
-        var agendamentoResponse = await _agendamentoService.MakeAgendamento(agendamentoRequest);
-
-        if (agendamentoResponse.Erro)
-        {
-            var pattern = @">\W+[a-zA-Z]\W.+";
-            var errorMessage = Regex.Match(agendamentoResponse.Html, pattern).Value;
-            return errorMessage;
-        }
-
-        return $"Agendamento efetuado para {agendamentoRequest.Nome}";
-    }
-
     public async Task<List<string>> MakeAgendamento(List<AgendamentoApplicationRequest> agendamentoRequests, int delayInMilliseconds)
     {
         var agendamentoResponseList = new List<string>();

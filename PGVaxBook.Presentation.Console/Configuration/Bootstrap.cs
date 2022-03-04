@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using PGVaxBook.ApplicationService.Agendamento;
 using PGVaxBook.ApplicationService.ConsultaAgendamento;
 using PGVaxBook.ApplicationService.Validations;
@@ -19,7 +18,8 @@ public static class Bootstrap
         var consultaAgendamentoApplicationService = GetConsultaAgendamentoApplicationServiceInstance(serviceProvider);
         var agendamentoApplicationService = GetAgendamentoApplicationServiceInstance(serviceProvider);
         var recordsConfiguration = GetRecordsConfigurationInstance(serviceProvider);
-        var argsValidationService = GetValidationServiceInstance(serviceProvider);
+        var argsValidationService = GetArgsValidationServiceInstance(serviceProvider);
+        var optionValidationService = GetOptionValidationServiceInstance(serviceProvider);
 
         var isSingleArgument = argsValidationService.IsSingleArgument(args);
 
@@ -43,26 +43,44 @@ public static class Bootstrap
 
             var menuOptionEnum = Menu.Option(option);
 
+            var optionValidation = false;
+
             switch (menuOptionEnum)
             {
                 case MenuOptionsEnum.Consulta:
                     MenuLevel1.ListOptions();
                     option = MenuLevel1.ReadOption();
+
+                    optionValidation = optionValidationService.IsInvalidOption(option);
+
+                    if (optionValidation)
+                    {
+                        System.Console.WriteLine("Invalid option.");
+                        return;
+                    }
+
                     var consultaRequest = MenuLevel1.OptionConsulta(option);
                     System.Console.WriteLine("\nExecuting Consulta");
 
-                    var result = new List<string>();
-                    result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest, 7000);
+                    var result = await consultaAgendamentoApplicationService.ConsultaAgendamento(consultaRequest, 7000);
                     result.ForEach(x => System.Console.WriteLine(x));
 
                     break;
                 case MenuOptionsEnum.Agendamento:
                     MenuLevel1.ListOptions();
                     option = MenuLevel1.ReadOption();
+
+                    optionValidation = optionValidationService.IsInvalidOption(option);
+
+                    if (optionValidation)
+                    {
+                        System.Console.WriteLine("Invalid option.");
+                        return;
+                    }
+
                     var agendamentoRequest = MenuLevel1.OptionAgendamento(option);
                     System.Console.WriteLine("\nExecuting Agendamento");
 
-                    result = new List<string>();
                     result = await agendamentoApplicationService.MakeAgendamento(agendamentoRequest, 7000);
                     result.ForEach(x => System.Console.WriteLine(x));
 
@@ -80,11 +98,18 @@ public static class Bootstrap
         }
     }
 
-    private static IArgsValidationService GetValidationServiceInstance(ServiceProvider serviceProvider)
+    private static IArgsValidationService GetArgsValidationServiceInstance(ServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var argsValidationService = scope.ServiceProvider.GetService<IArgsValidationService>();
         return argsValidationService;
+    }
+
+    private static IOptionValidationService GetOptionValidationServiceInstance(ServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var optionValidationService = scope.ServiceProvider.GetService<IOptionValidationService>();
+        return optionValidationService;
     }
 
     private static IAgendamentoApplicationService GetAgendamentoApplicationServiceInstance(ServiceProvider serviceProvider)

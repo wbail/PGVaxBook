@@ -36,6 +36,7 @@ public static class DependencyInvertionConfiguration
             .AddScoped<IAgendamentoService, AgendamentoService>()
             .AddScoped<IConsultaAgendamentoService, ConsultaAgendamentoService>()
             .AddScoped<IArgsValidationService, ArgsValidationService>()
+            .AddScoped<IOptionValidationService, OptionValidationService>()
             .AddSingleton<RecordsConfiguration>();
         
         return services.BuildServiceProvider();

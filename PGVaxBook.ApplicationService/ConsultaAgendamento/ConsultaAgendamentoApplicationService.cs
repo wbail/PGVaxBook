@@ -1,5 +1,7 @@
-﻿using PGVaxBook.Messages.Requests;
+﻿using PGVaxBook.ApplicationService.Extensions;
+using PGVaxBook.Messages.Requests;
 using PGVaxBook.Services.ConsultaAgendamento;
+using System.Text.RegularExpressions;
 
 namespace PGVaxBook.ApplicationService.ConsultaAgendamento;
 
@@ -24,7 +26,8 @@ public class ConsultaAgendamentoApplicationService : IConsultaAgendamentoApplica
 
             if (isAgendado)
             {
-                consultaAgendamentoResponseList.Add($"O CPF {consultaAgendamentoRequest.Cpf} esta agendado");
+                var messageParsed = ParseResponseMessage(response.Html);
+                consultaAgendamentoResponseList.Add($"{messageParsed} para o CPF {consultaAgendamentoRequest.Cpf}");
             }
             else
             {
@@ -44,5 +47,17 @@ public class ConsultaAgendamentoApplicationService : IConsultaAgendamentoApplica
         var exists = responseMessage.Contains("Agendado para ");
 
         return exists;
+    }
+
+    private string ParseResponseMessage(string message)
+    {
+        var pattern = @"(?<=<p>)(.*?)(?=<\/p>)";
+        var stringsToRemove = new List<string>() { "<strong>", "</strong>", "<i>", "</i>", "<br>", "</br>", "<br/>" };
+
+        var occurrence = Regex.Match(message, pattern).Value;
+
+        var newMessage = occurrence.Filter(stringsToRemove);
+
+        return newMessage;
     }
 }

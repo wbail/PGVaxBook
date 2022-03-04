@@ -55,7 +55,7 @@ public static class Bootstrap
 
                     if (optionValidation)
                     {
-                        System.Console.WriteLine("Invalid option.");
+                        System.Console.WriteLine("\nOpcao Invalida.");
                         return;
                     }
 
@@ -74,7 +74,7 @@ public static class Bootstrap
 
                     if (optionValidation)
                     {
-                        System.Console.WriteLine("Invalid option.");
+                        System.Console.WriteLine("\nOpcao Invalida.");
                         return;
                     }
 

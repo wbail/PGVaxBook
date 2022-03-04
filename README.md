@@ -52,7 +52,8 @@ Open the cmd and execute: ```git clone https://github.com/wbail/PGVaxBook```
 
 - Production
   1. Download the the latest `.exe` file available in this repo: https://github.com/wbail/PGVaxBook/releases
-  2. Download the text file: `records.txt`
+  2. Create a text file eg: `records.txt` with the following columns:
+    `Cartao_Sus,Celular,Cep,Complemento,DataNascimento,IdPrograma,Logradouro,Nome,Nome_Mae,Numero,Regiao,Sexo,Cpf`
   3. Replace the values with your information and save it
   4. Open a `cmd`
   5. Navigate where is located the `PGVaxBook.exe` file
